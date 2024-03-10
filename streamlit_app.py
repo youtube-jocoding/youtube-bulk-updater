@@ -199,7 +199,7 @@ def generate_html_diff_view(original_text, new_text):
     return html_diff
 
 def main():
-    st.title("YouTube Bulk Updater - 유튜브 벌크 업데이터")
+    st.title("YouTube Bulk Updater")
     st.markdown("by 유튜버 [조코딩 JoCoding](https://www.youtube.com/channel/UCQNE2JmbasNYbjGAcuBiRRg)")
     st.divider()
 
