@@ -13,7 +13,7 @@ def authenticate_user():
         "web": st.secrets["web"]
     }
     scopes = ['https://www.googleapis.com/auth/youtube.force-ssl']
-    flow = InstalledAppFlow.from_client_config(client_config, scopes, redirect_uri='http://localhost:8501/')
+    flow = InstalledAppFlow.from_client_config(client_config, scopes, redirect_uri='https://youtube-bulk-updater-jocoding.streamlit.app/')
     if 'credentials' not in st.session_state or st.session_state.credentials is None:
         auth_url, _ = flow.authorization_url(prompt='consent')
         st.link_button("Login", auth_url)
