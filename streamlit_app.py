@@ -1,6 +1,7 @@
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 import streamlit as st
+from privacy import display_privacy_policy
 import difflib
 
 # Use session state to store credentials
@@ -155,7 +156,7 @@ def update_video_descriptions_with_replacements(youtube, video_ids, replacements
             video_request = youtube.videos().list(part="snippet", id=video_id)
             video_response = video_request.execute()
             video_snippet = video_response["items"][0]["snippet"]
-            original_description = video_snippet["description"]
+            original_description = video_snippet["description"] # Origianalsieml; iow
 
             # Replace words in the description
             new_description = original_description
@@ -198,10 +199,74 @@ def generate_html_diff_view(original_text, new_text):
             html_diff += f"{line[2:].rstrip()}<br>"
     return html_diff
 
+def show_legal_notices():
+    st.markdown("""
+    **Legal Notices**:
+    
+    - By using this API Client, you agree to be bound by [YouTube's Terms of Service](https://www.youtube.com/t/terms).
+    - This application uses YouTube API Services and by using it, you are also agreeing to be bound by [Google's Privacy Policy](http://www.google.com/policies/privacy).
+    - To understand more about how this application uses, collects, and shares your data, please read our Privacy Policy.
+    """)
+    with st.expander("View Privacy Policy"):
+        display_privacy_policy()
+    st.markdown("""
+    - You can revoke this application's access to your data at any time through [Google's security settings page](https://security.google.com/settings/security/permissions).
+    
+    For questions or complaints about our privacy practices, please contact us at: help@jocoding.net.
+    """, unsafe_allow_html=True)
+
+def display_privacy_policy():
+            st.title("Privacy Policy")
+            st.write("""
+            ## Privacy Policy for YouTube Bulk Updater
+
+            Last updated: 2024-04-05
+
+            Welcome to the YouTube Bulk Updater ("Application"). We respect your privacy and are committed to protecting your personal data. This Privacy Policy will inform you as to how we look after your personal data when you visit our Application and tell you about your privacy rights and how the law protects you.
+
+            1. Important Information and Who We Are
+
+            YouTube Bulk Updater is provided by JoCoding ("we", "us", or "our"). This Privacy Policy applies to your use of our Application, which aims to help you update video descriptions in bulk on YouTube using the Google OAuth 2.0 authentication mechanism.
+
+            2. The Data We Collect About You
+
+            In using the YouTube Bulk Updater, we do not store, save, or collect any personal data from you. The Application uses Google OAuth 2.0 to authenticate you and gain temporary access to your YouTube account to perform actions you request, such as updating video descriptions. We only have access to your account during the session, and we do not retain access once you log out or the session ends.
+
+            3. How Is Your Personal Data Collected?
+
+            We use Google OAuth 2.0 to authenticate your YouTube account. This process does not give us access to your personal data. Google handles your login credentials, and we only receive an authentication token that allows us to perform the actions you've requested within the Application. This token does not give us the ability to view or store your login information or any personal data associated with your Google account.
+
+            4. How We Use Your Data
+
+            Given that we do not collect, store, or process any personal data, the Application solely uses the authorization provided by you to update video descriptions on your behalf. No personal data is used, stored, saved, or processed by the Application.
+
+            5. Data Security
+
+            We have implemented appropriate security measures to prevent your data from being accidentally lost, used, or accessed in an unauthorized way. We will notify you and any applicable regulator of a breach where we are legally required to do so.
+
+            6. Your Legal Rights
+
+            Under certain circumstances, you have rights under data protection laws in relation to your personal data, including the right to access, correct, erase, restrict or object to processing, and portability of your personal data. Since we do not collect or store any of your personal data, these rights are exercised through your Google account settings.
+
+            7. Third-Party Links
+
+            This Application may include links to third-party websites, plug-ins, and applications. Clicking on those links may allow third parties to collect or share data about you. We do not control these third-party websites and are not responsible for their privacy statements.
+
+            8. Contact Us
+
+            If you have any questions about this Privacy Policy, please contact us at help@jocoding.net.
+
+            9. Changes to the Privacy Policy
+
+            We may update this policy from time to time. The latest version will always be posted on this page.
+
+            By using YouTube Bulk Updater, you consent to this Privacy Policy.""")
+
 def main():
     st.title("YouTube Bulk Updater")
     st.markdown("by 유튜버 [조코딩 JoCoding](https://www.youtube.com/channel/UCQNE2JmbasNYbjGAcuBiRRg)")
     st.divider()
+    show_legal_notices()
 
     if not st.session_state.credentials:
         authenticate_user()
@@ -308,5 +373,4 @@ def main():
         </p>
         <hr style="border:1px solid #ccc">
         """, unsafe_allow_html=True)
-
 main()
