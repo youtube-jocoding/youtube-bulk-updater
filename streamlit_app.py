@@ -1,7 +1,6 @@
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 import streamlit as st
-from privacy import display_privacy_policy
 import difflib
 
 # Use session state to store credentials
