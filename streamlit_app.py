@@ -117,7 +117,7 @@ def fetch_videos_from_playlist(youtube, playlist_id):
 def fetch_video_snippets(youtube, video_ids):
     video_items = []
 
-    # video_ids split by 50 to avoid exceeding the limit
+    # Split video_ids by 50 to avoid exceeding the limit
     for i in range(math.ceil(len(video_ids) / 50)):
         video_request = youtube.videos().list(
             part="snippet",
