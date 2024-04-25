@@ -149,7 +149,12 @@ def update_video_descriptions_with_replacements(youtube, video_ids, replacements
     updated_count = 0  # Initialize counter
     errors = []  # List to store error messages
 
-    for video_id in video_ids:
+    # progress bar
+    progress_text = "Operation in progress. Please wait."
+    progress_bar = st.progress(0, text=progress_text)
+    video_count = len(video_ids)
+
+    for idx, video_id in enumerate(video_ids):
         try:
             # Fetch current video details
             video_request = youtube.videos().list(part="snippet", id=video_id)
@@ -173,6 +178,9 @@ def update_video_descriptions_with_replacements(youtube, video_ids, replacements
                 updated_count += 1  # Increment counter when a video is updated
         except Exception as e:
             errors.append(f"Failed to update video {video_id}: {e}")
+        progress_bar.progress((idx+1)/video_count, text=progress_text)
+
+    progress_bar.empty()  # Clear the progress bar after completion
     
     return updated_count, errors
 
