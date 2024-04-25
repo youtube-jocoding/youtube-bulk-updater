@@ -2,6 +2,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 import streamlit as st
 import difflib
+import math
 
 # Use session state to store credentials
 if 'credentials' not in st.session_state:
@@ -113,18 +114,36 @@ def fetch_videos_from_playlist(youtube, playlist_id):
         request = youtube.playlistItems().list_next(request, response)
     return video_details
 
+def fetch_video_snippets(youtube, video_ids):
+    video_items = []
+
+    # video_ids split by 50 to avoid exceeding the limit
+    for i in range(math.ceil(len(video_ids) / 50)):
+        video_request = youtube.videos().list(
+            part="snippet",
+            id=",".join(video_ids[50 * i : 50 * (i+1)]),
+        )
+        video_response = video_request.execute()
+
+        for item in video_response["items"]:
+            video_items.append({
+                "id": item["id"],
+                "snippet": item["snippet"]
+            })
+
+    return video_items
+
 def preview_video_descriptions_with_replacements(youtube, video_ids, replacements):
     # Function to preview changes without applying them
     previews = []  # Store previews here
-    for video_id in video_ids:
+    video_snippets = fetch_video_snippets(youtube, video_ids)
+    for video_item in video_snippets:
         try:
-            video_request = youtube.videos().list(part="snippet", id=video_id)
-            video_response = video_request.execute()
-            video_snippet = video_response["items"][0]["snippet"]
-            title = video_snippet["title"]
-            publishedAt = video_snippet["publishedAt"]
-            original_description = video_snippet["description"]
-            
+            video_id = video_item["id"]
+            title = video_item["snippet"]["title"]
+            publishedAt = video_item["snippet"]["publishedAt"]
+            original_description = video_item["snippet"]["description"]
+
             # Apply replacements to generate a new description
             new_description = original_description
             for old_word, new_word in replacements.items():
@@ -149,12 +168,12 @@ def update_video_descriptions_with_replacements(youtube, video_ids, replacements
     updated_count = 0  # Initialize counter
     errors = []  # List to store error messages
 
-    for video_id in video_ids:
+    video_snippets = fetch_video_snippets(youtube, video_ids)
+
+    for video_item in video_snippets:
         try:
-            # Fetch current video details
-            video_request = youtube.videos().list(part="snippet", id=video_id)
-            video_response = video_request.execute()
-            video_snippet = video_response["items"][0]["snippet"]
+            video_id = video_item["id"]
+            video_snippet = video_item["snippet"]
             original_description = video_snippet["description"] # Origianalsieml; iow
 
             # Replace words in the description
